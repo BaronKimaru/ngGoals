@@ -52,15 +52,6 @@ to (add your custom message ... for now):
 
 ### Dummy Data and Models/Goal.ts
 
-- Create the dummy data in your new `goals.component.ts` file as an attribute:
-  this.goals = [
-  {id: 1, title: 'Go to Borabora', completed: false},
-  {id: 2, title: 'Check out the Maasai Mara Wildebeest Migration', completed: true},
-  {id: 3, title: 'Climb Mt. Kenya', completed: true},
-  {id: 4, title: 'Visit Santorini', completed: false},
-  {id: 5, title: 'Wine and Dine in the Maldives', completed: false},
-  ]
-
 - Creating the `models/goal.ts` for fields that we want the Goal to have:
 
 ```
@@ -72,6 +63,7 @@ cd model && touch goal.ts
 
 ```
 // contains fields of a goal that youd want to have
+// NB: if not required, have them with question-mark -> id?: number
 export class Goal {
   id: number;
   title: string;
@@ -85,6 +77,45 @@ export class Goal {
   services** hence the need for the `ngOnInit(){}` for your other functionality that needs quick instantiation.
 
 4. In your `goals.component.html` file:
+
+- import the Goal structure from models/goal.ts and include it as a property of the class:
+
+```
+import { Goal } from '../../models/Goal';
+
+...other code..
+
+export class GoalsComponent implements OnInit() {
+    // have the Goal property here as goal of type Goal as a list of the Goal instances
+    goals: Goal[];
+
+```
+
+- Create the dummy data in your new `goals.component.ts` file as an attribute:
+
+```
+import { Goal } from '../../models/Goal';
+
+...other code..
+
+export class GoalsComponent implements OnInit() {
+    // have the Goal property here as goal of type Goal as a list of the Goal instances
+    goals: Goal[];
+
+    constructor() {}
+
+    ngOnInit() {
+        this.goals = [
+        {id: 1, title: 'Go to Borabora', completed: false},
+        {id: 2, title: 'Check out the Maasai Mara Wildebeest Migration', completed: true},
+        {id: 3, title: 'Climb Mt. Kenya', completed: true},
+        {id: 4, title: 'Visit Santorini', completed: false},
+        {id: 5, title: 'Wine and Dine in the Maldives', completed: false},
+        ]
+    }
+}
+
+```
 
 - iterate through the goals:
 
