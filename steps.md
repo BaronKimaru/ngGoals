@@ -373,3 +373,9 @@ export class Goal implements OnInit(){
     }
 }
 ```
+
+- Move data to a service so we can begin access to backend data:
+
+```
+ng generate service services/Goal
+```
