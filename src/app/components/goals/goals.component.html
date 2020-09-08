@@ -1,5 +1,1 @@
-<ul *ngFor="let goal of goals">
-  {{
-    goal.title
-  }}
-</ul>
+<app-goal *ngFor="let goal of goals" [goal]="goal"> </app-goal>

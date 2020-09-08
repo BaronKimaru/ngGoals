@@ -133,6 +133,12 @@ export class GoalsComponent implements OnInit() {
 ng generate component components/goal
 ```
 
+\*\*NB: remember if you have your material.module in the same folder as app.module, clashes will happen, so do this:
+
+```
+ng generate component components/goal  --module app.module
+```
+
 - In the goal.component.ts, note the selector in the `goal` component's decorator ie `app-goal`
 
 ```
@@ -174,6 +180,158 @@ import { Goal } from "../models/Goal";
 ...other code ...
 
 export class Goal {
-    @Input goal: Goal[];    // bound goal of type `goal` can now be used within this class
+    @Input() goal: Goal[];    // bound goal of type `goal` can now be used within this class
+}
+```
+
+7. Change cotnent of `app-goal.component.html` from its current default:
+
+```
+<p>
+    Goal works!
+</p>
+```
+
+to:
+
+```
+<p>
+    {{ goal.title }}
+</p>
+```
+
+- The individual goal items should now be seen
+
+### Inclusion of reset css in style.css
+
+```
+/* You can add global styles to this file, and also import other style files */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+}
+a {
+  color: #005e2a;
+  text-decoration: none;
+}
+.container {
+  padding: 0 1rem;
+}
+.btn {
+  display: inline-block;
+  padding: 8px 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: #005e2a;
+}
+.btn:hover {
+  background: #fff;
+  color: #fff;
+}
+```
+
+### Adding Static/Dynamic Classes, Change/Toggle & Delete to Individual Goal Instances
+
+1. Change the content of the goal.component.html from aforementioned change to
+
+```
+<div>
+    <input (change)="onToggleGoal">
+    <p>{{ goal.title }} </p>
+    <button class="delete" (onclick)="onDleteGoal"></button>
+</div>
+```
+
+2. Add Specific styling for the goal item via the `goal.component.css`:
+
+```
+.delete{
+    background: #ff0000;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius:50%;
+    float: right;
+}
+.goal{
+    background: #005e2a;
+    padding: 15px;
+    border: 1px solid #fff;
+}
+.is-complete{
+    text-decoration: line-through;
+}
+```
+
+3. Set dynamic classes using the ngClass Directive
+
+- set class in the goal.component.html
+
+```
+<div [ngClass]="setDynamicClassesForGoal">
+  <p>
+    <input type="checkbox" (change)="onToggleGoal(goal)" />
+    {{ goal.title }}
+    <button class="delete" (click)="onDeleteGoal(goal)">X</button>
+  </p>
+</div>
+```
+
+- Create the class in the goal.component.ts file:
+
+```
+import { Component, Input } from "@angular/core";
+import { Goal } from "../models/Goal";
+
+...other code ...
+
+export class Goal {
+    @Input() goal: Goal[];    // bound goal of type `goal` can now be used within this class
+
+    ngOnInit(){}
+
+    setDynamicClassesForGoal(){
+        let goalClasses = {
+            goal: true,
+            if(this.goal.completed == true){
+                "is-complete":true   // note that this class is in quotes(its because there's a hyphen)
+            }
+        }
+
+        return goalClasses
+    }
+}
+```
+
+4. In the goal.component.ts, create two methods in your class
+
+```
+export class Goal implements OnInit(){
+    ... other code ...
+
+    onToggleGoal(goal){
+        console.log("toggling goal"); // test out
+
+        // this method ensures that:
+        // 1. In the UI, the goal is crossed out if completed & viceversa
+        // 2. In the backend server, the goal is changed to completed & viceversa
+    }
+
+    onDeleteGoal(goal){
+        console.log("deleting goal");
+
+        // this method ensures that:
+        // 1. In the UI, the goal is removed from the rest of the goals
+        // 2. In the backend server, the goal is deleted permanently
+    }
 }
 ```

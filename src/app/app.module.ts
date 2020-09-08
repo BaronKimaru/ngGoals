@@ -8,9 +8,10 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { GoalsComponent } from "./components/goals/goals.component";
 import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { FlexLayoutModule } from "@angular/flex-layout";
+import { GoalComponent } from './components/goal/goal.component';
 
 @NgModule({
-  declarations: [AppComponent, GoalsComponent],
+  declarations: [AppComponent, GoalsComponent, GoalComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

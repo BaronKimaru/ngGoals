@@ -1,4 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+}
+a {
+  color: #005e2a;
+  text-decoration: none;
+}
+.container {
+  padding: 0 1rem;
+}
+.btn {
+  display: inline-block;
+  padding: 8px 1rem;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: #005e2a;
+}
+.btn:hover {
+  background: #fff;
+  color: #fff;
+}
