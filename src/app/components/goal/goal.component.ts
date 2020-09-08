@@ -21,4 +21,14 @@ export class GoalComponent implements OnInit {
 
     return goalClasses;
   }
+
+  onToggleGoal(goal) {
+    console.log("toggling goal"); // test out
+
+    goal.completed = !goal.completed; // toggles from complete to not complete in the UI
+  }
+
+  onDeleteGoal(goal) {
+    console.log("deleting goal");
+  }
 }

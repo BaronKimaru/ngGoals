@@ -1,7 +1,9 @@
 <div [ngClass]="setDynamicClassesForGoal()">
   <p>
-    <input type="checkbox" />
+    <input type="checkbox" (change)="onToggleGoal(goal)" />
     {{ goal.title }}
-    <button class="delete">X</button>
+    <button class="delete" (click)="onDeleteGoal(goal)">
+      <strong>X</strong>
+    </button>
   </p>
 </div>

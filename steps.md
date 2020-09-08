@@ -239,6 +239,11 @@ a {
 
 ### Adding Static/Dynamic Classes, Change/Toggle & Delete to Individual Goal Instances
 
+\*\*NB:\*\*
+
+- `ngClass` directive is always within Curly Braces ie [ngClass]
+- click, submit & other events are in parentheses ie (click)
+
 1. Change the content of the goal.component.html from aforementioned change to
 
 ```
@@ -279,9 +284,9 @@ a {
 ```
 <div [ngClass]="setDynamicClassesForGoal">
   <p>
-    <input type="checkbox" (change)="onToggleGoal(goal)" />
+    <input type="checkbox" />
     {{ goal.title }}
-    <button class="delete" (click)="onDeleteGoal(goal)">X</button>
+    <button class="delete" >X</button>
   </p>
 </div>
 ```
@@ -312,7 +317,24 @@ export class Goal {
 }
 ```
 
-4. In the goal.component.ts, create two methods in your class
+4. Set Events eg (change) or (click) or (submit) - logging for testing purposes first:
+   **NB:**
+
+- the methods that are instantiated will take in the instance we want the event to happen in (eg `goal` in our case)
+
+* in `goal.component.html`, add events for changing and deleting:
+
+```
+<div [ngClass]="setDynamicClassesForGoal">
+  <p>
+    <input type="checkbox" (change)="onToggleGoal(goal)" />
+    {{ goal.title }}
+    <button class="delete" (click)="onDeleteGoal(goal)" > X </button>
+  </p>
+</div>
+```
+
+- In the `goal.component.ts`, create two methods in your class
 
 ```
 export class Goal implements OnInit(){
@@ -332,6 +354,22 @@ export class Goal implements OnInit(){
         // this method ensures that:
         // 1. In the UI, the goal is removed from the rest of the goals
         // 2. In the backend server, the goal is deleted permanently
+    }
+}
+```
+
+5. Set Events (Frontend & backend)
+
+- In the `goal.component.ts`, set the goal to be incomplete if toggled & viceversa
+
+```
+export class Goal implements OnInit(){
+    ... other code ...
+
+    onToggleGoal(goal){
+        console.log("toggling goal"); // test out
+
+        goal.completed = !goal.completed;
     }
 }
 ```
