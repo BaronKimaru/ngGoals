@@ -18,4 +18,11 @@ export class GoalsComponent implements OnInit {
       this.goals = goals; // this.goals will be added
     });
   }
+
+  // NB, goal is of type Goal in the argument
+  deleteGoal(goal: Goal) {
+    console.log("goals.component: deleting goal");
+
+    this.goals = this.goals.filter((goalItem) => goalItem.id != goal.id);
+  }
 }

@@ -640,3 +640,94 @@ export class GoalService {
   }
 }
 ```
+
+![image](https://user-images.githubusercontent.com/16536231/92510700-ec8aab80-f214-11ea-920f-58d273681d06.png)
+
+- Delete -> Tricky cause it requires emitting the event up to where todos are (in `goals.component.ts`):
+  **in `goal.components.ts`: create the method triggered by the button click & in it emit the goal instance up to the parent component `goals.component.ts` as `Output`**
+
+```
+import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core"; // added Output & eventEmitter
+
+export class GoalComponent implements OnInit {
+  @Input() goal: Goal;
+  @Output() deleteGoal: EventEmitter<Goal> = new EventEmitter(); // method must be an EventEmmitter of type Goal
+
+  onDeleteGoal(goal){
+    this.deleteGoal.emit(goal); // deleteGoal will be emitted at the top
+  }
+}
+```
+
+- then we catch that emitted event in the `goals.component.html`:
+
+```
+<app-goal
+    *ngFor="let goal of goals"
+    [goal]="goal"
+    (onDeleteGoal) = deleteGoal($event)
+    >
+</app-goal>
+
+```
+
+- Finally in goals.service.ts, we catch the above deleteTodo(\$event) method:
+
+```
+... other code ...
+export class GoalsComponent implements OnInit {
+  goals: Goal[];
+
+  constructor(private goalService: GoalService) {}
+
+  ngOnInit() {
+    this.goalService.fetchGoals().subscribe((goals) => {
+      console.log("goals: %o", goals);
+      this.goals = goals; // this.goals will be added
+    });
+  }
+
+  // NB, goal is of type Goal in the argument
+  deleteGoal(goal: Goal) {
+    console.log("goals.component: deleting goal");
+
+    // we'll delete from the ui
+    // we'll also delete from the backend
+  }
+}
+```
+
+- Deleting from UI
+
+```
+import { Component, OnInit } from "@angular/core";
+import { Goal } from "../../models/goal";
+import { GoalService } from "src/app/services/goal.service";
+
+@Component({
+  selector: "app-goals",
+  templateUrl: "./goals.component.html",
+  styleUrls: ["./goals.component.css"],
+})
+export class GoalsComponent implements OnInit {
+  goals: Goal[];
+
+  constructor(private goalService: GoalService) {}
+
+  ngOnInit() {
+    this.goalService.fetchGoals().subscribe((goals) => {
+      console.log("goals: %o", goals);
+      this.goals = goals; // this.goals will be added
+    });
+  }
+
+  // NB, goal is of type Goal in the argument
+  deleteGoal(goal: Goal) {
+    console.log("goals.component: deleting goal");
+
+    this.goals = this.goals.filter((goalItem) => {
+      goalItem.id != goal.id;
+    }); // only show goals where the id is not the clicked goal's id
+  }
+}
+```

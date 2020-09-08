@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 import { Goal } from "src/app/models/goal";
 import { GoalService } from "src/app/services/goal.service";
 
@@ -9,6 +9,7 @@ import { GoalService } from "src/app/services/goal.service";
 })
 export class GoalComponent implements OnInit {
   @Input() goal: Goal;
+  @Output() deleteGoal: EventEmitter<Goal> = new EventEmitter();
 
   constructor(private goalService: GoalService) {}
 
@@ -37,6 +38,8 @@ export class GoalComponent implements OnInit {
   }
 
   onDeleteGoal(goal) {
-    console.log("deleting goal");
+    console.log("goal.component: deleting goal");
+
+    this.deleteGoal.emit(goal); // deleteGoal will be emitted at the top
   }
 }

@@ -1,1 +1,6 @@
-<app-goal *ngFor="let goal of goals" [goal]="goal"> </app-goal>
+<app-goal
+  *ngFor="let goal of goals"
+  [goal]="goal"
+  (deleteGoal)="deleteGoal($event)"
+>
+</app-goal>
