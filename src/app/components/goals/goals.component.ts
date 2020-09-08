@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Goal } from "../../models/goal";
+import { GoalService } from "src/app/services/goal.service";
 
 @Component({
   selector: "app-goals",
@@ -9,35 +10,12 @@ import { Goal } from "../../models/goal";
 export class GoalsComponent implements OnInit {
   goals: Goal[];
 
-  constructor() {}
+  constructor(private goalService: GoalService) {}
 
   ngOnInit() {
-    this.goals = [
-      {
-        id: 1,
-        title: "Go to Borabora",
-        completed: false,
-      },
-      {
-        id: 2,
-        title: "Check out the Maasai Mara Wildebeest Migration",
-        completed: true,
-      },
-      {
-        id: 3,
-        title: "Climb Mt. Kenya",
-        completed: true,
-      },
-      {
-        id: 4,
-        title: "Visit Santorini",
-        completed: false,
-      },
-      {
-        id: 5,
-        title: "Wine and Dine in the Maldives",
-        completed: false,
-      },
-    ];
+    this.goalService.fetchGoals().subscribe((goals) => {
+      console.log("goals: %o", goals);
+      this.goals = goals; // this.goals will be added
+    });
   }
 }

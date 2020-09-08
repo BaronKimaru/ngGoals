@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Goal } from "src/app/models/goal";
+import { GoalService } from "src/app/services/goal.service";
 
 @Component({
   selector: "app-goal",
@@ -8,7 +9,8 @@ import { Goal } from "src/app/models/goal";
 })
 export class GoalComponent implements OnInit {
   @Input() goal: Goal;
-  constructor() {}
+
+  constructor(private goalService: GoalService) {}
 
   ngOnInit() {}
 
@@ -25,7 +27,13 @@ export class GoalComponent implements OnInit {
   onToggleGoal(goal) {
     console.log("toggling goal"); // test out
 
-    goal.completed = !goal.completed; // toggles from complete to not complete in the UI
+    // toggles from complete to not complete in the UI
+    goal.completed = !goal.completed;
+
+    // toggle in the backend
+    this.goalService.toggleGoal(goal).subscribe((goal) => {
+      console.log(goal);
+    });
   }
 
   onDeleteGoal(goal) {

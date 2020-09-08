@@ -379,3 +379,264 @@ export class Goal implements OnInit(){
 ```
 ng generate service services/Goal
 ```
+
+- Go to `goal.service.ts` and move the sample data from `goals.components.ts` to it:
+
+```
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GoalService {
+
+  constructor() { }
+
+  fetchGoals() {
+    return [
+      {
+        id: 1,
+        title: "Go to Borabora",
+        completed: false,
+      },
+      {
+        id: 2,
+        title: "Check out the Maasai Mara Wildebeest Migration",
+        completed: true,
+      },
+      {
+        id: 3,
+        title: "Climb Mt. Kenya",
+        completed: true,
+      },
+      {
+        id: 4,
+        title: "Visit Santorini",
+        completed: false,
+      },
+      {
+        id: 5,
+        title: "Wine and Dine in the Maldives",
+        completed: false,
+      },
+      {
+        id: 6,
+        title: "Go snorkeling in Diani",
+        completed: true,
+      },
+    ];
+}
+```
+
+- In `goals.component.ts`, bring in the GoalService via the constructor and then use it to fetch the goals:
+
+```
+import { Component, OnInit } from "@angular/core";
+import { Goal } from "../../models/goal";
+import { GoalService } from "src/app/services/goal.service";
+
+@Component({
+  selector: "app-goals",
+  templateUrl: "./goals.component.html",
+  styleUrls: ["./goals.component.css"],
+})
+export class GoalsComponent implements OnInit {
+  goals: Goal[];
+
+  constructor(private goalService: GoalService) {}   // GoalService brought in
+
+  ngOnInit() {
+    this.goals = this.goalService.fetchGoals();     // GoalService used to fetch all the goals
+  }
+}
+
+```
+
+### Fetch data from API - jsonplaceholder.typicode.
+
+- Include the http module for handling Requests (GET, POST etc) in your `app.module.ts`:
+
+```
+import { HttpClientModule } from "@angular/common/http";
+
+// in your imports, add it
+@NgModule({
+  declarations: [AppComponent, GoalsComponent, GoalComponent],
+  imports: [
+    // ... other imports ...
+
+    HttpClientModule,           // added the http module here
+
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
+```
+
+- In `goal.service.ts`, bring in the newly-installed http stuff:
+
+```
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from "@angular/common/http";         // added the http imports here
+
+// get rid of the sample data (or include it above the class as a global like this)
+const sampleData = [
+  { id: 1, title: "Go to Borabora", completed: false },
+  { id: 2,title: "Check out the Maasai Mara Wildebeest Migration",completed: false,},
+  { id: 3, title: "Climb Mt. Kenya", completed: true },
+  { id: 4, title: "Visit Santorini", completed: false },
+  { id: 5, title: "Wine and Dine in the Maldives", completed: false },
+  { id: 6,title: "Go snorkeling in Diani",completed: false,},
+];
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GoalService {
+
+  constructor(private http: HttpClient) { }             // added the http client
+
+  fetchGoals() {
+    // return sampleData;    // now we use data from api
+  }
+}
+
+```
+
+- fetching the goals
+
+```
+export class GoalService {
+  apiUrl: string = "https://jsonplaceholder.typicode.com/todos";
+
+  constructor(private http: HttpClient) {}
+
+  fetchGoals(): Observable<Goal[]> {
+    // return sampleData;    // now we use data from api
+    return this.http.get<Goal[]>(this.apiUrl); // will be of type Goal[] hence we bring it in (the method too)
+  }
+}
+```
+
+- Now change content of ngOnInit(){} to use `subscribe` & whatever we get will be linked to `this.goals`:
+  Change from:
+
+```
+// ...other code ...
+
+export class GoalsComponent implements OnInit {
+  goals: Goal[];
+
+  constructor(private goalService: GoalService) {}
+
+  ngOnInit() {
+
+    this.goals = this.goalService.fetchGoals();
+  }
+}
+
+```
+
+to:
+
+```
+export class GoalsComponent implements OnInit {
+  goals: Goal[];
+
+  constructor(private goalService: GoalService) {}
+
+  ngOnInit() {
+    this.goalService.fetchGoals().subscribe(goals => {
+        this.goals = goals;         // this.goals will be added
+    });
+  }
+}
+```
+
+![image](https://user-images.githubusercontent.com/16536231/92499558-b34a3f80-f204-11ea-8598-7af0aeffe4e7.png)
+
+- set a limit
+
+```
+export class GoalService {
+  apiUrl: string = "https://jsonplaceholder.typicode.com/todos";
+  apiContentLimit = "?_limit=10";
+
+  constructor(private http: HttpClient) {}
+
+  fetchGoals(): Observable<Goal[]> {
+    // return sampleData;    // now we use data from api
+    return this.http.get<Goal[]>(`${this.apiUrl}${this.apiContentLimit}`); // will be of type Goal[] hence we bring it in (the method too)
+  }
+}
+```
+
+### Toggling & Deleting in server
+
+- in `goal.component.ts`, bring in the service` :
+
+```
+... other code ...
+
+import { GoalService } from "src/app/services/goal.service";   // imported the service
+
+@Component({
+  selector: "app-goal",
+  templateUrl: "./goal.component.html",
+  styleUrls: ["./goal.component.css"],
+})
+export class GoalComponent implements OnInit {
+  @Input() goal: Goal;
+
+  constructor(private goalService: GoalService) {}    // brought in the service
+
+... other code ...
+
+```
+
+- Create the toggle fucntionality for the backend in the `goal.component.ts`
+
+```
+  ... other code ..
+
+  onToggleGoal(goal) {
+    console.log("toggling goal"); // test out
+
+    // toggles from complete to not complete in the UI
+    goal.completed = !goal.completed;
+
+    // toggle in the backend (will give us our todo back- Ive console logged to show it)
+    this.goalService.toggleGoal(goal).subscribe(goal=>{
+        console.log(goal);
+    });  // toggleGoal has to b created
+  }
+
+  ... other code ...
+
+```
+
+- in `goal.service`, create the ToggleGoal(goal) & remember to include `httpOptions`:
+
+```
+
+// Must be passed to put request
+const httpOptions = {
+  headers: new HttpHeaders({
+    "Content-Type": "application/json",
+  }),
+};
+
+... other code ...
+
+export class GoalService {
+  ... other code ...
+
+  // toggleGoal() will be of type any coz response isnt formatted as an exact goal eg missing userId
+  toggleGoal(goal): Observable<any> {
+    const url = `${this.apiUrl}/${goal.id}`;
+    return this.http.put(url, goal, httpOptions);
+  }
+}
+```
