@@ -25,7 +25,7 @@ export class GoalComponent implements OnInit {
     return goalClasses;
   }
 
-  onToggleGoal(goal) {
+  onToggleGoal(goal: Goal) {
     console.log("toggling goal"); // test out
 
     // toggles from complete to not complete in the UI
@@ -37,7 +37,7 @@ export class GoalComponent implements OnInit {
     });
   }
 
-  onDeleteGoal(goal) {
+  onDeleteGoal(goal: Goal) {
     console.log("goal.component: deleting goal");
 
     this.deleteGoal.emit(goal); // deleteGoal will be emitted at the top
