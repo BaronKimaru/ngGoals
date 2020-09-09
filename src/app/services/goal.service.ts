@@ -36,12 +36,12 @@ export class GoalService {
   }
 
   // toggleGoal() will be of type any coz todo response isnt formatted as an exact goal eg missing userId
-  toggleGoal(goal): Observable<any> {
+  toggleGoal(goal: Goal): Observable<any> {
     const url = `${this.apiUrl}/${goal.id}`;
     return this.http.put(url, goal, httpOptions);
   }
 
-  deleteGoal(goal): Observable<Goal> {
+  deleteGoal(goal: Goal): Observable<Goal> {
     const url = `${this.apiUrl}/${goal.id}`;
     // console.log(url);
     return this.http.delete<Goal>(url, httpOptions);

@@ -1,10 +1,15 @@
 .form {
   display: flex;
+  font-family: inherit;
 }
 .form input[type="text"] {
   flex: 10;
-  padding: 5px;
+  padding: 15px;
+  font-family: inherit;
+  font-size: inherit;
 }
 .form input[type="submit"] {
   flex: 2;
+  font-family: inherit;
+  font-size: inherit;
 }

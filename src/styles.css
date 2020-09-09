@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap");
 
 * {
   margin: 0;
@@ -6,7 +7,10 @@
   box-sizing: border-box;
 }
 body {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: "PlayFair Display", "Helvetica Neue", sans-serif;
+  /* font-family: "Oswald", "Helvetica Neue", sans-serif !important; */
+  font-size: 18px;
+  font-weight: 600;
   line-height: 1.5;
 }
 a {
@@ -23,8 +27,9 @@ a {
   border: none;
   outline: none;
   background: #000;
+  color: #fff;
 }
 .btn:hover {
-  background: #fff;
-  color: #fff;
+  background: #000;
+  color: green;
 }
