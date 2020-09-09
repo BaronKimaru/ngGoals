@@ -40,4 +40,17 @@ export class GoalService {
     const url = `${this.apiUrl}/${goal.id}`;
     return this.http.put(url, goal, httpOptions);
   }
+
+  deleteGoal(goal): Observable<Goal> {
+    const url = `${this.apiUrl}/${goal.id}`;
+    // console.log(url);
+    return this.http.delete<Goal>(url, httpOptions);
+  }
+
+  // Add Goal - use the direct apiUrl as is
+  addGoal(goal: Goal): Observable<Goal> {
+    console.log("goals.service: Adding Goal to Server/backend");
+
+    return this.http.post<Goal>(this.apiUrl, goal, httpOptions);
+  }
 }

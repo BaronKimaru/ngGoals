@@ -731,3 +731,422 @@ export class GoalsComponent implements OnInit {
   }
 }
 ```
+
+- Delete from Server
+
+```
+
+... other code ..
+
+export class GoalsComponent implements OnInit {
+  ... other code ..
+  // NB, goal is of type Goal in the argument
+  deleteGoal(goal: Goal) {
+    console.log("goals.component: deleting goal");
+
+    this.goals = this.goals.filter((goalItem) => {
+      goalItem.id != goal.id;
+    }); // only show goals where the id is not the clicked goal's id
+
+    this.goalService.deleteGoal(goal).subscribe();    // add this (we dont need a return of anything)
+  }
+}
+```
+
+- Create that deleteGoal service in `goal.service`
+
+```
+export class GoalService {
+  ... other code ...
+
+  deleteGoal(goal): Observable<Goal> {
+    const url = `${this.apiUrl}/${goal.id}`;
+    return this.http.delete<Goal>(url, httpOptions);
+  }
+}
+```
+
+\*\*NB:
+
+1. Notice that for Update/PUT request: method has Observable of type <any> since returning response is not formatted as exact Goal.  
+   Also notice that `this.http.put` has no `<Goal>` structure like the other requests for this reason.  
+   Lastly, it takes in **url & goal & httpOptions**. (has a goal instance)
+2. Notice that for Delete requests: method has observable of type <Goal>.  
+   Also notice that `this.http.delete` has a `<Goal>` structure .  
+   Lastly, it takes in **url & httpOptions only**. (no goal instance)
+
+### Create Header
+
+```
+ng g c components/layout/header
+```
+
+**Nb, in my case:**
+
+```
+ng g c components/layout/Header --module app.module
+```
+
+- in Header.component.html, add this:
+
+```
+
+```
+
+- In Header.component.css:
+
+```
+.header{
+    background: #005e2a;
+    color: #ccc;
+    text-align: center;
+    padding: 10px;
+}
+.header a{
+    text-underline: none;
+    color: #fff;
+}
+```
+
+### Adding new Goals
+
+```
+ng g c components/AddGoal
+```
+
+in my case:
+
+```
+ng g c  components/AddGoal --module app.module
+```
+
+- Bind the inputs to new AddGoalComponent class properties
+
+`add-goal.component.ts`
+
+```
+export class AddGoalComponent(){
+    title: string;  // The `name="title"` in your input will be bound to this `title` property via ngmodel directive
+                    // the ngmodel directive is in curly brackets and parentheses cause its Two-way data binding [()]
+}
+```
+
+`add-goal.component.ts`
+
+```
+<form class="form">
+    <input
+        type="text"
+        name="title"
+        [(ngModel)]="title"
+        placeholder="Add Goal"
+    />    <!-- NB, ngmodel's & name's values should alws be same -->
+    <input type="submit" value="submit" class="btn" />
+</form>
+```
+
+- If we save the above, we get an error cause we havent brought in `FormsModule` which houses `[(ngModel)]`:
+
+in `app.module.ts`, add the below and the site should come back up:
+
+```
+
+... other code ...
+
+import { ReactiveFormsModule, FormsModule } from "@angular/forms"; // bring this in
+
+
+@NgModule({
+  declarations: [AppComponent, GoalsComponent, GoalComponent, HeaderComponent, AddGoalComponent],
+  imports: [
+
+    ... other code ...
+
+    FormsModule,   // bring this in
+    ReactiveFormsModule,
+
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+```
+
+- Add the `app-add-goal` selector to the main `app.component.html`:
+
+```
+<div>
+  <app-header></app-header>
+
+  <app-add-goal></app-add-goal>     <!-- Add goal here -->
+
+  <app-goals></app-goals>
+</div>
+
+```
+
+- you can as well choose to add it solely to your goals.component.html file:
+
+```
+<app-add-goal></app-add-goal>     <!-- Add goal here -->
+
+<app-goal
+  *ngFor="let goal of goals"
+  [goal]="goal"
+  (deleteGoal)="deleteGoal($event)"
+>
+</app-goal>
+
+```
+
+- Style the `app.component.html` contents in `add-goal.component.css`
+
+```
+.form{
+    display:flex;
+}
+.form input[type='text']{
+    flex:10;
+    padding: 5px;
+}
+.form input[type='submit']{
+    flex: 2;
+}
+```
+
+- Test out that the bound title works by creatig {{ title }} in the form as below & type something in:
+
+```
+<form class="form">
+    <input
+        type="text"
+        name="title"
+        [(ngModel)]="title"
+        placeholder="Add Goal"
+    />    <!-- NB, ngmodel's & name's values should alws be same -->
+
+    {{ title }}    // displays what you type as it is as the `ngModel` directive is bound to the `title` property
+
+    <input type="submit" value="submit" class="btn" />
+</form>
+```
+
+it should display what you type as you do so
+
+![image](https://user-images.githubusercontent.com/16536231/92573396-6612b000-f28e-11ea-8129-2700d6f661ea.png)
+
+- Objective: When we add Goal, we want it :
+
+1. displayed in the UI
+2. Make Post request to the server to simulate adding goal to list of goals
+
+- Event to Add Goal - (ngSubmit) - remember events are in parenthesis
+
+`add-goal.component.html` content looks like below. Also Remember `ngSubmit` resides in the form element \*winks
+
+    ```
+    <form class="form" (ngSubmit)="onSubmitGoal()" >    <!-- added event-->
+        <input
+            type="text"
+            name="title"
+            [(ngModel)]="title"
+            placeholder="Add Goal"
+        />    <!-- NB, ngmodel's & name's values should alws be same -->
+
+        {{ title }}    // displays what you type as it is as the `ngModel` directive is bound to the `title` property
+
+        <input type="submit" value="submit" class="btn" />
+    </form>
+    ```
+
+`add-goal.component.ts`
+
+    ```
+    export class AddGoalComponent(){
+        title: string;  // The `name="title"` in your input will be bound to this `title` property via ngmodel directive
+                        // the ngmodel directive is in curly brackets and parentheses cause its Two-way data binding [()]
+
+        constructor() {}
+
+        ngOnInit(){}
+
+        onSubmitGoal(){
+            // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+            const goal = {
+                title: this.title,      // the bound title property of this class
+                completed: false,       // completed will normally be false by default
+            }
+
+            // like the delete, we emit this upward to access the goals in the `goals.component.ts`
+            this.addGoal.emit(goal);    // emitting this to parent component `goals.component.ts`
+
+            // set the title to empty once sent
+            // this.title = '';
+        }
+    }
+    ```
+
+- Since we've created this.addGoal to emit upwards to goals.component.ts, we add Output and EventEmitter
+  \*\*NB: Remember how in goal.component we had deleteGoal be eventemmitter of type Goal like so ... ?
+
+  ```
+  @Output deleteGoal: EventEmmitter<Goal> = new EventEmitter();
+  ```
+
+\*\*Well in `addGoal` case, it will be of type any since we dont need/have an `id` so its not formatted like an exact Goal
+
+    ```
+    @Output addGoal: EventEmmitter<Goal> = new EventEmitter();
+    ```
+
+- add-goal.component.ts should now look like this
+
+  ```
+  import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+
+  @Component({
+  selector: "app-add-goal",
+  templateUrl: "./add-goal.component.html",
+  styleUrls: ["./add-goal.component.css"],
+  })
+  export class AddGoalComponent implements OnInit {
+  @Output() addGoal: EventEmitter<any> = new EventEmitter(); // is of type any since its not formatted as exact <Goal> ie no id
+
+  // The `name="title"` in your input will be bound to this `title` property via ngmodel directive
+  // the ngmodel directive is in curly brackets and parentheses cause its Two-way data binding [()]
+  title: string;
+
+  constructor() {}
+
+  ngOnInit() {}
+
+  onSubmitGoal() {
+      // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+      const goal = {
+      title: this.title, // the bound title property of this class
+      completed: false, // completed will normally be false by default
+      };
+
+      // like the delete, we emit this upward to access the goals in the `goals.component.ts`
+      this.addGoal.emit(goal); // emitting this to parent component `goals.component.ts` via `goals.component.html`
+  }
+  }
+
+  ```
+
+`goals.component.html`
+
+    ```
+    <app-add-goal (addGoal)="addGoal($event)"></app-add-goal>    <!-- added this -->
+
+    <app-goal
+    *ngFor="let goal of goals"
+    [goal]="goal"
+    (deleteGoal)="deleteGoal($event)"
+    >
+    </app-goal>
+
+    ```
+
+- make post request to the api service, once we get the goal back, add it to the rest
+  in `goal.service.ts`:
+
+  ```
+  export class GoalService {
+  apiUrl: string = "https://jsonplaceholder.typicode.com/todos";
+
+  ... other code ...
+
+  // Add Goal - use the direct apiUrl as is
+  addGoal(goal: Goal): Observable<Goal> {
+      console.log("goals.service: Adding Goal to Server/backend");
+
+      return this.http.post<Goal>(this.apiUrl, goal, httpOptions);
+  }
+  }
+  ```
+
+![image](https://user-images.githubusercontent.com/16536231/92581125-ebe72900-f297-11ea-986d-a6dc41953205.png)
+
+### Routing
+
+- Create an About Component
+
+  ```
+  ng g c components/pages/about --module app.module
+  ```
+
+  - Add this content in `about.component.html`
+
+  ```
+  <div>
+  <h1>
+      About
+  </h1>
+  <p>
+      Welcome to the Goal Attainment App v1.0.0. This learning experience &
+      product was as a result of Brad's Angular Crash Course.
+  </p>
+  </div>
+  ```
+
+```
+
+- Update your routes in `app-routing.component.ts`
+
+```
+
+import { NgModule } from "@angular/core";
+import { Routes, RouterModule } from "@angular/router";
+import { GoalsComponent } from "./components/goals/goals.component";
+import { AboutComponent } from "./components/pages/about/about.component";
+
+const routes: Routes = [
+{ path: "", component: GoalsComponent },
+{ path: "about", component: AboutComponent },
+];
+
+@NgModule({
+imports: [RouterModule.forRoot(routes)],
+exports: [RouterModule],
+})
+export class AppRoutingModule {}
+
+```
+
+- change your goals.component.html from this:
+
+```
+
+  <div>
+  <app-header></app-header>
+
+<app-goals></app-goals>
+
+  </div>
+
+```
+
+to this:
+
+```
+
+  <div>
+  <app-header></app-header>
+
+<router-outlet></routeroutlet> // remove this: <app-goals></app-goals>
+
+  </div>
+  ```
+
+- Add Links in Header(nb, we dont use href, we use routerLink="")
+  in header.component
+
+  ```
+  <mat-toolbar color="" fxLayout="column">
+    <span> {{ title }} </span>
+    <nav>
+        <a routerLink="/">Home</a> | <a routerLink="/about">About</a>
+    </nav>
+  </mat-toolbar>
+  ```

@@ -10,8 +10,8 @@ body {
   line-height: 1.5;
 }
 a {
-  color: #005e2a;
-  text-decoration: none;
+  color: #fff;
+  /* text-decoration: none; */
 }
 .container {
   padding: 0 1rem;
@@ -22,7 +22,7 @@ a {
   cursor: pointer;
   border: none;
   outline: none;
-  background: #005e2a;
+  background: #000;
 }
 .btn:hover {
   background: #fff;

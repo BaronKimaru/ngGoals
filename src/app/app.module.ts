@@ -10,9 +10,12 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { GoalComponent } from "./components/goal/goal.component";
 import { HttpClientModule } from "@angular/common/http";
+import { HeaderComponent } from './components/layout/header/header.component';
+import { AddGoalComponent } from './components/add-goal/add-goal.component';
+import { AboutComponent } from './components/pages/about/about.component';
 
 @NgModule({
-  declarations: [AppComponent, GoalsComponent, GoalComponent],
+  declarations: [AppComponent, GoalsComponent, GoalComponent, HeaderComponent, AddGoalComponent, AboutComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
