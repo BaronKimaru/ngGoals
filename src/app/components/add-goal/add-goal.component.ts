@@ -17,7 +17,7 @@ export class AddGoalComponent implements OnInit {
   ngOnInit() {}
 
   onSubmitGoal() {
-    // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+    // create the Goal (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
     console.log("clicked");
     const goal = {
       title: this.title, // the bound title property of this class

@@ -32,13 +32,13 @@ export class GoalService {
 
   fetchGoals(): Observable<Goal[]> {
     // return sampleData;    // now we use data from api
-    return this.http.get<Goal[]>(`${this.apiUrl}${this.apiContentLimit}`); // will be of type Goal[] hence we bring it in
+    return this.http.get<Goal[]>(`${this.apiUrl}${this.apiContentLimit}`); // nb Its of type Goal[]
   }
 
-  // toggleGoal() will be of type any coz todo response isnt formatted as an exact goal eg missing userId
+  // toggleGoal() will be of type any coz goal response isnt formatted as an exact goal eg missing userId
   toggleGoal(goal: Goal): Observable<any> {
     const url = `${this.apiUrl}/${goal.id}`;
-    return this.http.put(url, goal, httpOptions);
+    return this.http.put(url, goal, httpOptions); // nb no type here for the put request
   }
 
   deleteGoal(goal: Goal): Observable<Goal> {

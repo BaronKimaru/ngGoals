@@ -237,7 +237,7 @@ a {
 }
 ```
 
-### Adding Static/Dynamic Classes, Change/Toggle & Delete to Individual Goal Instances
+### Adding Static/Dynamic Classes (for the Container <div>), Change/Toggle & Delete Individual Goal Instances
 
 \*\*NB:\*\*
 
@@ -248,9 +248,9 @@ a {
 
 ```
 <div>
-    <input (change)="onToggleGoal">
+    <input (change)="onToggleGoal(goal)">
     <p>{{ goal.title }} </p>
-    <button class="delete" (onclick)="onDleteGoal"></button>
+    <button class="delete" (onclick)="onDeleteGoal(goal)"></button>
 </div>
 ```
 
@@ -282,7 +282,7 @@ a {
 - set class in the goal.component.html
 
 ```
-<div [ngClass]="setDynamicClassesForGoal">
+<div [ngClass]="setDynamicClassesForGoal()">
   <p>
     <input type="checkbox" />
     {{ goal.title }}
@@ -307,9 +307,11 @@ export class Goal {
     setDynamicClassesForGoal(){
         let goalClasses = {
             goal: true,
-            if(this.goal.completed == true){
-                "is-complete":true   // note that this class is in quotes(its because there's a hyphen)
-            }
+            "is-complete": this.goal.completed, // note that this class is in quotes(its because there's a hyphen)
+
+            // if(this.goal.completed == true){
+            //    "is-complete":true   // note that this class is in quotes(its because there's a hyphen)
+            // } - TODO: test this out later
         }
 
         return goalClasses
@@ -358,7 +360,7 @@ export class Goal implements OnInit(){
 }
 ```
 
-5. Set Events (Frontend & backend)
+5. Set Events (Frontend & backend) & Creation of Services for access to Backend data
 
 - In the `goal.component.ts`, set the goal to be incomplete if toggled & viceversa
 
@@ -452,7 +454,7 @@ export class GoalsComponent implements OnInit {
 
 ```
 
-### Fetch data from API - jsonplaceholder.typicode.
+### Fetch data from API - jsonplaceholder.typicode.com/todos
 
 - Include the http module for handling Requests (GET, POST etc) in your `app.module.ts`:
 
@@ -568,7 +570,7 @@ export class GoalService {
 
   fetchGoals(): Observable<Goal[]> {
     // return sampleData;    // now we use data from api
-    return this.http.get<Goal[]>(`${this.apiUrl}${this.apiContentLimit}`); // will be of type Goal[] hence we bring it in (the method too)
+    return this.http.get<Goal[]>(`${this.apiUrl}${this.apiContentLimit}`); // nb Its of type Goal[]
   }
 }
 ```
@@ -596,7 +598,7 @@ export class GoalComponent implements OnInit {
 
 ```
 
-- Create the toggle fucntionality for the backend in the `goal.component.ts`
+- Create the toggle functionality for the backend in the `goal.component.ts`
 
 ```
   ... other code ..
@@ -607,7 +609,7 @@ export class GoalComponent implements OnInit {
     // toggles from complete to not complete in the UI
     goal.completed = !goal.completed;
 
-    // toggle in the backend (will give us our todo back- Ive console logged to show it)
+    // toggle in the backend (will give us our goal back- Ive console logged to show it)
     this.goalService.toggleGoal(goal).subscribe(goal=>{
         console.log(goal);
     });  // toggleGoal has to b created
@@ -636,14 +638,14 @@ export class GoalService {
   // toggleGoal() will be of type any coz response isnt formatted as an exact goal eg missing userId
   toggleGoal(goal): Observable<any> {
     const url = `${this.apiUrl}/${goal.id}`;
-    return this.http.put(url, goal, httpOptions);
+    return this.http.put(url, goal, httpOptions); // nb no type here for the put request
   }
 }
 ```
 
 ![image](https://user-images.githubusercontent.com/16536231/92510700-ec8aab80-f214-11ea-920f-58d273681d06.png)
 
-- Delete -> Tricky cause it requires emitting the event up to where todos are (in `goals.component.ts`):
+- Delete -> Tricky cause it requires emitting the event up to where Goals are (in `goals.component.ts`):
   **in `goal.components.ts`: create the method triggered by the button click & in it emit the goal instance up to the parent component `goals.component.ts` as `Output`**
 
 ```
@@ -971,7 +973,7 @@ export class AddGoalComponent(){
     ngOnInit(){}
 
     onSubmitGoal(){
-        // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+        // create the Goal (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
         const goal = {
             title: this.title,      // the bound title property of this class
             completed: false,       // completed will normally be false by default
@@ -1021,7 +1023,7 @@ export class AddGoalComponent implements OnInit {
   ngOnInit() {}
 
   onSubmitGoal() {
-    // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+    // create the Goal (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
     const goal = {
       title: this.title, // the bound title property of this class
       completed: false, // completed will normally be false by default
