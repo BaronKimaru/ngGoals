@@ -1,7 +1,8 @@
 # NgGoals
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.1.  
-Can be accessed at https://nggoal.netlify.app
+  
+The above project can be accessed at https://nggoals.netlify.app
 
 ## Development server
 
