@@ -7,8 +7,9 @@
   box-sizing: border-box;
 }
 body {
-  font-family: "PlayFair Display", "Helvetica Neue", sans-serif;
+  /* font-family: "PlayFair Display", "Helvetica Neue", sans-serif; */
   /* font-family: "Oswald", "Helvetica Neue", sans-serif !important; */
+  font-family: monospace, sans-serif;
   font-size: 18px;
   font-weight: 600;
   line-height: 1.5;
