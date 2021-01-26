@@ -270,7 +270,7 @@ var AddGoalComponent = /** @class */ (function () {
     }
     AddGoalComponent.prototype.ngOnInit = function () { };
     AddGoalComponent.prototype.onSubmitGoal = function () {
-        // create the todo (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
+        // create the Goal (remember, most apis like jsonplaceholder dont need you to pass an id, they create it automatically)
         console.log("clicked");
         var goal = {
             title: this.title,
@@ -648,12 +648,12 @@ var GoalService = /** @class */ (function () {
     }
     GoalService.prototype.fetchGoals = function () {
         // return sampleData;    // now we use data from api
-        return this.http.get("" + this.apiUrl + this.apiContentLimit); // will be of type Goal[] hence we bring it in
+        return this.http.get("" + this.apiUrl + this.apiContentLimit); // nb Its of type Goal[]
     };
-    // toggleGoal() will be of type any coz todo response isnt formatted as an exact goal eg missing userId
+    // toggleGoal() will be of type any coz goal response isnt formatted as an exact goal eg missing userId
     GoalService.prototype.toggleGoal = function (goal) {
         var url = this.apiUrl + "/" + goal.id;
-        return this.http.put(url, goal, httpOptions);
+        return this.http.put(url, goal, httpOptions); // nb no type here for the put request
     };
     GoalService.prototype.deleteGoal = function (goal) {
         var url = this.apiUrl + "/" + goal.id;
